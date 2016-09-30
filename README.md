@@ -22,12 +22,25 @@ csp = FlaskCSP()
 @app.route('/')
 @csp.csp_header()
 ```
-### Add custom header
-Pass the csp_header wrapper a dict with the policies to change:
+
+### Set defaults once
+
 ```python
 from flask_csp.csp import FlaskCSP
-csp = FlaskCSP()
+csp = FlaskCSP({
+    "script-src": "'self'"
+})
 
+@app.route('/')
+@csp.csp_header()
+```
+
+All the decorators will now use the defaults given to `FlaskCSP`. You can
+override this per route as seen below.
+
+### Custom header per route
+Pass the csp_header wrapper a dict with the policies to change:
+```python
 @app.route('/')
 @csp.csp_header({'default-src':"'none'",'script-src':"'self'"})
 ```
