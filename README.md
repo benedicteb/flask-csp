@@ -16,18 +16,20 @@ Add the csp_header(...) decorator after the app.route(...) decorator to create a
 
 ### Add default header
 ```python
-from flask_csp.csp import csp_header
-...
+from flask_csp.csp import FlaskCSP
+csp = FlaskCSP()
+
 @app.route('/')
-@csp_header()
+@csp.csp_header()
 ```
 ### Add custom header
 Pass the csp_header wrapper a dict with the policies to change:
 ```python
-from flask_csp.csp import csp_header
-...
+from flask_csp.csp import FlaskCSP
+csp = FlaskCSP()
+
 @app.route('/')
-@csp_header({'default-src':"'none'",'script-src':"'self'"})
+@csp.csp_header({'default-src':"'none'",'script-src':"'self'"})
 ```
 Notes: 
 * Only policies with a non empty value are added to the header. The wrapper @csp_header({'default-src':""}) will remove 'default-src ...' from the header
@@ -38,10 +40,11 @@ Notes:
 ### Report only header
 To set the header to "Report only" pass the key/value pair 'report-only':True to the custom header dict:
 ```python
-from flask_csp.csp import csp_header
-...
+from flask_csp.csp import FlaskCSP
+csp = FlaskCSP()
+
 @app.route('/')
-@csp_header({'report-only':True})
+@csp.csp_header({'report-only':True})
 ```
 
 ## Change Default Policies
@@ -63,23 +66,23 @@ The default policies are as follows:
 ```
 Edit default policies via command line:
 ```python
->>> from flask_csp.csp import csp_default
->>> h = csp_default()
->>> h.update({'child-src':"'self'"})
+>>> from flask_csp.csp import FlaskCSP
+>>> csp = FlaskCSP()
+>>> csp.update_defaults({'child-src':"'self'"})
 ```
 Edit default policies on flask app:
 ```python
-from flask_csp.csp import csp_header, csp_default
+from flask_csp.csp import FlaskCSP
 
-h = csp_default()
-h.update({'script-src':"'self' code.jquery.com"})
+csp = FlaskCSP()
+csp.update_defaults({'script-src':"'self' code.jquery.com"})
 ```
 
 To view the default policies:
 ```python
->>> from flask_csp.csp import csp_default
->>> h = csp_default()
->>> h.read()
+>>> from flask_csp.csp import FlaskCSP
+>>> csp = FlaskCSP()
+>>> csp.defaults
 ```
 Note: 
 * Python interpreter must be reloaded for changes to the default policies to take place
@@ -89,7 +92,7 @@ Based on the default settings, reports will be sent to the route 'csp_report' th
 ```python
 @app.route('/csp_report',methods=['POST'])
 def csp_report():
-	with open('/var/log/csp/csp_reports'), "a") as fh:
-		fh.write(request.data+"\n")
-	return 'done'
+    with open('/var/log/csp/csp_reports'), "a") as fh:
+        fh.write(request.data+"\n")
+    return 'done'
 ```
