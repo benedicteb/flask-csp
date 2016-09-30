@@ -6,9 +6,11 @@ More information on CSP:
 * [useful guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/)
 
 ## Installation
-Install the extension with using pip, or easy_install. [Pypi Link](https://pypi.python.org/pypi/flask-csp)
+
+Since this is a fork, you have to install manually. Clone the repo and run
+
 ```bash
-$ pip install flask-csp
+$ python setup.py install
 ```
 
 ## Usage
