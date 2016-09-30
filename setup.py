@@ -6,7 +6,6 @@ setup(
   name = 'flask-csp',
   packages = ['flask_csp'],
   include_package_data = True,
-  package_data = {'':['csp_default.json']},
   version = '0.9',
   description = 'Flask Content Security Policy header support',
   long_description = """
@@ -18,7 +17,6 @@ Mitigate the risk of cross-site scripting attacks by whitelisting trusted origin
   author = 'Tristan Waldear',
   author_email = 'trwaldear@gmail.com',
   url = 'https://github.com/twaldear/flask-csp',
-  download_url = 'https://github.com/twaldear/flask-csp/tarball/0.1',
   keywords = ['flask', 'csp', 'header'],
   classifiers=[
     'Development Status :: 4 - Beta',
