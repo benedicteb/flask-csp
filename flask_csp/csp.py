@@ -6,7 +6,7 @@ from flask import make_response
 from functools import wraps
 
 class FlaskCSP(object):
-    def __init__(self, defaults=None):
+    def __init__(self, defaults=None, app=None):
         if not defaults:
             defaults = {
                 "script-src": "",
@@ -24,20 +24,17 @@ class FlaskCSP(object):
 
         self.defaults = defaults
 
-    def _create_csp_header(self, cspDict):
+        if app:
+            app.after_request(self._set_csp_header)
+
+    def _create_csp_string(self, cspDict):
         """
         create csp header string
         """
         policy = ['%s %s' % (k, v) for k, v in cspDict.items() if v != '']
         return '; '.join(policy)
 
-    def update_defaults(self, cspDict):
-        self.defaults = cspDict
-
-    def csp_header(self, cspDict=None):
-        """
-        Decorator to include csp header on app.route wrapper
-        """
+    def _create_csp_headers(self, cspDict=None):
         if cspDict:
             csp = cspDict
         else:
@@ -53,7 +50,27 @@ class FlaskCSP(object):
         else:
             header_type = 'Content-Security-Policy'
 
-        headers = {header_type: self._create_csp_header(csp)}
+        return {header_type: self._create_csp_string(csp)}
+
+    def _set_csp_header(self, response):
+        """
+        Add CSP header to all requests.
+        """
+        headers = self._create_csp_headers()
+
+        for header,value in headers.items():
+            response.headers.setdefault(header, value)
+
+        return response
+
+    def update_defaults(self, cspDict):
+        self.defaults = cspDict
+
+    def csp_header(self, cspDict=None):
+        """
+        Decorator to include csp header on app.route wrapper
+        """
+        headers = self._create_csp_headers(cspDict)
 
         def decorator(f):
             @wraps(f)
